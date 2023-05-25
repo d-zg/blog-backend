@@ -2,11 +2,13 @@ import express, { Express, Request, Response } from 'express';
 import dotenv from 'dotenv';
 import mongoose from 'mongoose';
 import bodyParser from 'body-parser';
+import cors from 'cors';
 
 dotenv.config();
 
 const app: Express = express();
 app.use(bodyParser.json());
+app.use(cors());
 const port = process.env.PORT || 443;
 
 const Schema = mongoose.Schema;
