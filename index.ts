@@ -7,7 +7,7 @@ dotenv.config();
 
 const app: Express = express();
 app.use(bodyParser.json());
-const port = process.env.PORT || 3002;
+const port = process.env.PORT || 443;
 
 const Schema = mongoose.Schema;
 const blogPostSchema = new Schema({
