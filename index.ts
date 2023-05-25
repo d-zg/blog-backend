@@ -50,7 +50,7 @@ app.get('/blogposts/:id', (req, res) => {
       return res.status(404).send('Blog post not found');
     }
     // Return the full text of the blog post
-    res.send(blogpost.fulltext);
+    res.send(blogpost);
   }).catch((error) => {
     console.log(error);
     res.status(500).send('An error occurred');
