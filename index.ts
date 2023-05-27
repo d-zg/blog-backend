@@ -3,6 +3,8 @@ import dotenv from 'dotenv';
 import mongoose from 'mongoose';
 import bodyParser from 'body-parser';
 import cors from 'cors';
+import https from 'https';
+import fs from 'fs';
 
 dotenv.config();
 
@@ -10,6 +12,12 @@ const app: Express = express();
 app.use(bodyParser.json());
 app.use(cors());
 const port = process.env.PORT || 443;
+
+const options = {
+  key: fs.readFileSync('/etc/letsencrypt/live/dzgwriting.xyz/privkey.pem'),
+  cert: fs.readFileSync('/etc/letsencrypt/live/dzgwriting.xyz/fullchain.pem')
+};
+
 
 const Schema = mongoose.Schema;
 const blogPostSchema = new Schema({
@@ -80,7 +88,8 @@ app.post('/blogposts', (req, res) => {
 });
 
 
+const server = https.createServer(options, app);
 
-app.listen(port, () => {
-  console.log(`⚡️[server]: Server is running at http://localhost:${port}`);
+server.listen(port, () => {
+  console.log(`⚡️[server]: Server is running at https://localhost:${port}`);
 });

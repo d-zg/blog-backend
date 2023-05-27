@@ -8,11 +8,17 @@ const dotenv_1 = __importDefault(require("dotenv"));
 const mongoose_1 = __importDefault(require("mongoose"));
 const body_parser_1 = __importDefault(require("body-parser"));
 const cors_1 = __importDefault(require("cors"));
+const https_1 = __importDefault(require("https"));
+const fs_1 = __importDefault(require("fs"));
 dotenv_1.default.config();
 const app = (0, express_1.default)();
 app.use(body_parser_1.default.json());
 app.use((0, cors_1.default)());
 const port = process.env.PORT || 443;
+const options = {
+    key: fs_1.default.readFileSync('/etc/letsencrypt/live/dzgwriting.xyz/privkey.pem'),
+    cert: fs_1.default.readFileSync('/etc/letsencrypt/live/dzgwriting.xyz/fullchain.pem')
+};
 const Schema = mongoose_1.default.Schema;
 const blogPostSchema = new Schema({
     tagline: String,
@@ -48,7 +54,7 @@ app.get('/blogposts/:id', (req, res) => {
             return res.status(404).send('Blog post not found');
         }
         // Return the full text of the blog post
-        res.send(blogpost.fulltext);
+        res.send(blogpost);
     }).catch((error) => {
         console.log(error);
         res.status(500).send('An error occurred');
@@ -73,6 +79,7 @@ app.post('/blogposts', (req, res) => {
         res.status(500).send('An error occurred');
     });
 });
-app.listen(port, () => {
-    console.log(`⚡️[server]: Server is running at http://localhost:${port}`);
+const server = https_1.default.createServer(options, app);
+server.listen(port, () => {
+    console.log(`⚡️[server]: Server is running at https://localhost:${port}`);
 });
