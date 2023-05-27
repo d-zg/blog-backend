@@ -17,7 +17,8 @@ app.use((0, cors_1.default)());
 const port = process.env.PORT || 443;
 const options = {
     key: fs_1.default.readFileSync('/etc/letsencrypt/live/dzgwriting.xyz/privkey.pem'),
-    cert: fs_1.default.readFileSync('/etc/letsencrypt/live/dzgwriting.xyz/fullchain.pem')
+    cert: fs_1.default.readFileSync('/etc/letsencrypt/live/dzgwriting.xyz/fullchain.pem'),
+    secureProtocol: 'TLSv1_2_method'
 };
 const Schema = mongoose_1.default.Schema;
 const blogPostSchema = new Schema({

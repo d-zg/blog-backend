@@ -15,7 +15,8 @@ const port = process.env.PORT || 443;
 
 const options = {
   key: fs.readFileSync('/etc/letsencrypt/live/dzgwriting.xyz/privkey.pem'),
-  cert: fs.readFileSync('/etc/letsencrypt/live/dzgwriting.xyz/fullchain.pem')
+  cert: fs.readFileSync('/etc/letsencrypt/live/dzgwriting.xyz/fullchain.pem'),
+  secureProtocol: 'TLSv1_2_method'
 };
 
 
