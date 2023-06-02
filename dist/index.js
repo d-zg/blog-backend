@@ -8,18 +8,18 @@ const dotenv_1 = __importDefault(require("dotenv"));
 const mongoose_1 = __importDefault(require("mongoose"));
 const body_parser_1 = __importDefault(require("body-parser"));
 const cors_1 = __importDefault(require("cors"));
-const https_1 = __importDefault(require("https"));
-const fs_1 = __importDefault(require("fs"));
 dotenv_1.default.config();
 const app = (0, express_1.default)();
 app.use(body_parser_1.default.json());
 app.use((0, cors_1.default)());
 const port = process.env.PORT || 443;
-const options = {
-    key: fs_1.default.readFileSync('/etc/letsencrypt/live/dzgwriting.xyz/privkey.pem'),
-    cert: fs_1.default.readFileSync('/etc/letsencrypt/live/dzgwriting.xyz/fullchain.pem'),
-    secureProtocol: 'TLSv1_2_method'
-};
+// set up SSL encryption
+// const options = {
+//   key: fs.readFileSync('/etc/letsencrypt/live/dzgwriting.xyz/privkey.pem'),
+//   cert: fs.readFileSync('/etc/letsencrypt/live/dzgwriting.xyz/fullchain.pem'),
+//   secureProtocol: 'TLSv1_2_method'
+// };
+// here is mongoDB schema
 const Schema = mongoose_1.default.Schema;
 const blogPostSchema = new Schema({
     tagline: String,
@@ -28,7 +28,16 @@ const blogPostSchema = new Schema({
     id: String,
     fulltext: String,
 });
-mongoose_1.default.connect('mongodb+srv://daniel:r4OgvykQbzXAqDJ5@danielblog.te9b5na.mongodb.net/?retryWrites=true&w=majority');
+// Get the URI we want to connect to from env variables if it exists, else throw err
+if (!process.env.MONGODB_URI) {
+    throw new Error('MongoDB URI is missing in the environment variables.');
+}
+else if (process.env.MONGODB_URI) {
+    mongoose_1.default.connect(process.env.MONGODB_URI);
+}
+else {
+    throw new Error('MongoDB connection failed.');
+}
 const db = mongoose_1.default.connection;
 db.on('error', console.error.bind(console, 'connection error:'));
 db.once('open', function () {
@@ -80,7 +89,7 @@ app.post('/blogposts', (req, res) => {
         res.status(500).send('An error occurred');
     });
 });
-const server = https_1.default.createServer(options, app);
-server.listen(port, () => {
-    console.log(`⚡️[server]: Server is running at https://localhost:${port}`);
-});
+// const server = https.createServer(options, app);
+// server.listen(port, () => {
+//   console.log(`⚡️[server]: Server is running at https://localhost:${port}`);
+// });

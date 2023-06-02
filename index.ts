@@ -13,13 +13,14 @@ app.use(bodyParser.json());
 app.use(cors());
 const port = process.env.PORT || 443;
 
+// set up SSL encryption
 const options = {
   key: fs.readFileSync('/etc/letsencrypt/live/dzgwriting.xyz/privkey.pem'),
   cert: fs.readFileSync('/etc/letsencrypt/live/dzgwriting.xyz/fullchain.pem'),
   secureProtocol: 'TLSv1_2_method'
 };
 
-
+// here is mongoDB schema
 const Schema = mongoose.Schema;
 const blogPostSchema = new Schema({
   tagline: String, 
@@ -29,8 +30,16 @@ const blogPostSchema = new Schema({
   fulltext: String,
 })
 
-mongoose.connect('mongodb+srv://daniel:r4OgvykQbzXAqDJ5@danielblog.te9b5na.mongodb.net/?retryWrites=true&w=majority');
-
+// Get the URI we want to connect to from env variables if it exists, else throw err
+if (!process.env.MONGODB_URI) {
+  throw new Error('MongoDB URI is missing in the environment variables.');
+}
+else if (process.env.MONGODB_URI) {
+  mongoose.connect(process.env.MONGODB_URI);
+}
+else {
+  throw new Error('MongoDB connection failed.');
+}
 const db = mongoose.connection;
 db.on('error', console.error.bind(console, 'connection error:'));
 db.once('open', function() {
